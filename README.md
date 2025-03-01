@@ -2,7 +2,9 @@
 
 A Model Context Protocol (MCP) server that implements the Cline Memory Bank concept for Cursor IDE. This tool helps maintain context across sessions by creating and managing a structured documentation system.
 
-**Never explain your project to AI assistants again.** This Model Context Protocol (MCP) server solves the biggest limitation of AI coding assistants: their inability to remember context between sessions. By implementing the Cline Memory Bank concept for Cursor IDE, it creates a persistent memory system that ensures your AI assistant always understands your project.
+## Never Explain Your Project to AI Assistants Again
+
+This Model Context Protocol (MCP) server solves the biggest limitation of AI coding assistants: their inability to remember context between sessions. By implementing the Cline Memory Bank concept for Cursor IDE, it creates a persistent memory system that ensures your AI assistant always understands your project.
 
 ## What is Memory Bank?
 
