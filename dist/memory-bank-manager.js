@@ -43,13 +43,49 @@ const glob_1 = require("glob");
 class MemoryBankManager {
     constructor(options) {
         this.structure = {};
+        this.isClinemoryBank = false;
         this.workspacePath = options.workspacePath;
         this.memoryBankPath = options.memoryBankPath || path.join(this.workspacePath, 'memory-bank');
+        this.globalRulesPath = path.join(this.workspacePath, '.cursor', 'rules');
+    }
+    /**
+     * Check if this is a Cline memory bank
+     */
+    async detectClinemoryBank() {
+        try {
+            // Check for Cline-specific files or patterns
+            const memoryBankExists = await fs.pathExists(this.memoryBankPath);
+            if (!memoryBankExists) {
+                return false;
+            }
+            // Check for .clinerules file which is specific to Cline
+            const clinerules = await fs.pathExists(path.join(this.memoryBankPath, '.clinerules'));
+            // Also check for other Cline-specific patterns
+            const files = await (0, glob_1.glob)('**/*.md', { cwd: this.memoryBankPath });
+            const hasClinemoryBankStructure = files.some(file => file.includes('projectbrief.md') ||
+                file.includes('activeContext.md') ||
+                file.includes('progress.md'));
+            this.isClinemoryBank = clinerules || hasClinemoryBankStructure;
+            return this.isClinemoryBank;
+        }
+        catch (error) {
+            console.error('Error detecting Cline memory bank:', error);
+            return false;
+        }
     }
     /**
      * Initialize the memory bank structure
      */
     async initialize(projectInfo) {
+        // Check if Cline memory bank already exists
+        const isClinemoryBank = await this.detectClinemoryBank();
+        if (isClinemoryBank) {
+            console.log('Detected existing Cline memory bank. Using existing structure.');
+            const structure = await this.readAll();
+            if (structure) {
+                return structure;
+            }
+        }
         // Create memory-bank directory if it doesn't exist
         await fs.ensureDir(this.memoryBankPath);
         // Create the initial structure
@@ -413,6 +449,105 @@ ${techList || '- [List technologies used]'}
 
 *This file captures important patterns, preferences, and project intelligence that help work more effectively.*
 `;
+    }
+    /**
+     * Create global rules directory and default rule file
+     */
+    async initializeGlobalRules() {
+        // Create .cursor/rules directory if it doesn't exist
+        const rulesDir = this.globalRulesPath;
+        await fs.ensureDir(rulesDir);
+        // Create default global rule file
+        const defaultRulePath = path.join(rulesDir, 'memory-bank.mdc');
+        const content = this.generateDefaultGlobalRule();
+        await fs.writeFile(defaultRulePath, content);
+        return {
+            content,
+            path: defaultRulePath
+        };
+    }
+    /**
+     * Read global rules
+     */
+    async readGlobalRules() {
+        try {
+            const rulesDir = this.globalRulesPath;
+            // Check if .cursor/rules directory exists
+            if (!await fs.pathExists(rulesDir)) {
+                return null;
+            }
+            // Check if memory-bank.mdc exists
+            const rulePath = path.join(rulesDir, 'memory-bank.mdc');
+            if (!await fs.pathExists(rulePath)) {
+                return null;
+            }
+            // Read rule content
+            const content = await fs.readFile(rulePath, 'utf-8');
+            return {
+                content,
+                path: rulePath
+            };
+        }
+        catch (error) {
+            console.error('Error reading global rules:', error);
+            return null;
+        }
+    }
+    /**
+     * Update global rules
+     */
+    async updateGlobalRules(content) {
+        const rulesDir = this.globalRulesPath;
+        await fs.ensureDir(rulesDir);
+        const rulePath = path.join(rulesDir, 'memory-bank.mdc');
+        await fs.writeFile(rulePath, content);
+        return {
+            content,
+            path: rulePath
+        };
+    }
+    /**
+     * Generate default global rule content
+     */
+    generateDefaultGlobalRule() {
+        return `# File patterns: **/*.md
+
+## Memory Bank Rules
+
+I am Cursor, an expert software engineer with a unique characteristic: my memory resets completely between sessions. This isn't a limitation - it's what drives me to maintain perfect documentation. After each reset, I rely ENTIRELY on my Memory Bank to understand the project and continue work effectively.
+
+### Memory Bank Structure
+
+The Memory Bank consists of required core files and optional context files, all in Markdown format. Files build upon each other in a clear hierarchy:
+
+1. \`memory-bank/projectbrief.md\` - Foundation document that shapes all other files
+2. \`memory-bank/productContext.md\` - Why this project exists, problems it solves, how it should work
+3. \`memory-bank/systemPatterns.md\` - System architecture, key technical decisions, design patterns
+4. \`memory-bank/techContext.md\` - Technologies used, development setup, technical constraints
+5. \`memory-bank/activeContext.md\` - Current work focus, recent changes, next steps
+6. \`memory-bank/progress.md\` - What works, what's left to build, current status
+
+### Core Workflows
+
+1. At the start of each session, I will:
+   - Check if the memory-bank/ directory exists
+   - If it exists, read all memory bank files to understand the project context
+   - If it doesn't exist, ask if the user wants to initialize the memory bank
+
+2. I understand and respond to the following commands:
+   - \`initialize memory bank\` - Create the initial memory bank structure
+   - \`update memory bank\` - Review and update all memory bank files
+   - \`follow memory bank\` - Read the memory bank files and continue where I left off
+
+3. After significant changes to the project, I will:
+   - Suggest updating the relevant memory bank files
+   - Provide specific updates based on the changes made
+
+### Interoperability with Cline
+
+This memory bank is designed to be interchangeable with Cline's Memory Bank. Both Cursor and Cline can read and update these files, allowing you to switch between the two assistants while maintaining context.
+
+REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is my only link to previous work. It must be maintained with precision and clarity, as my effectiveness depends entirely on its accuracy.`;
     }
 }
 exports.MemoryBankManager = MemoryBankManager;

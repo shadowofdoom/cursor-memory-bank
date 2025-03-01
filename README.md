@@ -19,7 +19,7 @@ The system works by:
 Clone this repository and install it globally:
 
 ```bash
-git clone https://github.com/yourusername/cursor-memory-bank.git
+git clone https://github.com/shadowofdoom/cursor-memory-bank.git
 cd cursor-memory-bank
 npm install
 npm run build
@@ -31,7 +31,7 @@ npm install -g .
 Clone this repository and run it directly:
 
 ```bash
-git clone https://github.com/yourusername/cursor-memory-bank.git
+git clone https://github.com/shadowofdoom/cursor-memory-bank.git
 cd cursor-memory-bank
 npm install
 npm run build
@@ -65,6 +65,50 @@ npm run start
    npx cursor-memory-bank
    ```
 
+### Automatic Integration with Cursor
+
+This project provides two ways to integrate with Cursor's AI:
+
+#### 1. Project-Specific Rules (.cursorrules)
+
+The MCP server automatically creates a `.cursorrules` file in your project root that instructs Cursor's AI to:
+
+- Read all memory bank files at the start of each session
+- Update the memory bank files when significant changes are made
+- Respond to memory bank commands
+
+#### 2. Global Rules (Project Rules)
+
+The MCP server also creates a global rule file in the `.cursor/rules` directory that works with Cursor's Project Rules system:
+
+- Located at `.cursor/rules/memory-bank.mdc`
+- Automatically applies to all markdown files in your project
+- Provides the same memory bank functionality as the `.cursorrules` file
+- Works with Cursor's new Project Rules system
+
+To use global rules:
+
+1. Open Cursor Settings
+2. Navigate to General > Project Rules
+3. Verify that the "memory-bank" rule is enabled
+4. The rule will automatically apply to all markdown files in your project
+
+## Interoperability with Cline
+
+This MCP server is designed to work with both new and existing memory banks, including those created by Cline. Key features:
+
+- **Automatic Detection**: The server automatically detects if a Cline memory bank already exists in your project
+- **Seamless Integration**: If a Cline memory bank is found, the server will use it without modification
+- **Compatible Structure**: The memory bank structure is compatible with both Cursor and Cline
+- **Switch Between Assistants**: You can use both Cursor and Cline with the same memory bank, switching between them as needed
+
+This allows you to:
+1. Start a project with Cline and continue with Cursor
+2. Use Cursor for some tasks and Cline for others
+3. Collaborate with team members who prefer different assistants
+
+The memory bank files serve as a shared knowledge base that both assistants can read and update.
+
 ## Memory Bank Structure
 
 The Memory Bank consists of required core files and optional context files, all in Markdown format:
@@ -93,7 +137,7 @@ When using Cursor with this MCP server, you can use the following commands:
 1. The MCP server monitors your project workspace
 2. It creates and maintains the memory bank files
 3. It provides these files to Cursor's AI when needed
-4. It helps the AI understand when to update the documentation
+4. The `.cursorrules` file and global rules instruct Cursor's AI to automatically use the memory bank
 
 ## License
 

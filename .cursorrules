@@ -126,4 +126,13 @@ After significant changes to the project, I will:
 1. Suggest updating the relevant memory bank files
 2. Provide specific updates based on the changes made
 
+## Interoperability with Cline
+
+This memory bank is designed to be interchangeable with Cline's Memory Bank. Both Cursor and Cline can read and update these files, allowing you to switch between the two assistants while maintaining context.
+
+When working with a Cline memory bank:
+1. I will respect Cline's existing structure and formatting
+2. I will maintain compatibility with Cline's expectations
+3. I will not modify files in ways that would break Cline's ability to read them
+
 REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is my only link to previous work. It must be maintained with precision and clarity, as my effectiveness depends entirely on its accuracy. 

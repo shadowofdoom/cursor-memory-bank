@@ -56,4 +56,12 @@ export interface ProjectInfo {
   description: string;
   technologies: string[];
   structure: string;
+}
+
+/**
+ * Interface for global rules
+ */
+export interface GlobalRules {
+  content: string;
+  path: string;
 } 

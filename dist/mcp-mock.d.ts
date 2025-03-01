@@ -1,10 +1,8 @@
-/**
- * Mock implementation of the MCP server for demonstration purposes
- */
 export interface MCPServerOptions {
     name: string;
     description: string;
     version: string;
+    port?: number;
 }
 export interface MCPToolOptions {
     name: string;
@@ -32,8 +30,13 @@ export declare class MCPServer {
     private description;
     private version;
     private tools;
+    private server;
+    private port;
+    private clients;
+    private clientId;
     constructor(options: MCPServerOptions);
     start(): Promise<void>;
+    private sendSSEMessage;
     registerTool(tool: MCPTool): void;
     executeTool(name: string, params: any): Promise<any>;
 }

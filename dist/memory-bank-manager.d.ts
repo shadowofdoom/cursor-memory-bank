@@ -1,4 +1,4 @@
-import { MemoryBankFile, MemoryBankOptions, MemoryBankStructure, ProjectInfo } from './types';
+import { MemoryBankFile, MemoryBankOptions, MemoryBankStructure, ProjectInfo, GlobalRules } from './types';
 /**
  * Manages the Memory Bank files and operations
  */
@@ -6,7 +6,13 @@ export declare class MemoryBankManager {
     private workspacePath;
     private memoryBankPath;
     private structure;
+    private globalRulesPath;
+    private isClinemoryBank;
     constructor(options: MemoryBankOptions);
+    /**
+     * Check if this is a Cline memory bank
+     */
+    detectClinemoryBank(): Promise<boolean>;
     /**
      * Initialize the memory bank structure
      */
@@ -47,4 +53,20 @@ export declare class MemoryBankManager {
      * Generate clinerules content
      */
     private generateClinerules;
+    /**
+     * Create global rules directory and default rule file
+     */
+    initializeGlobalRules(): Promise<GlobalRules>;
+    /**
+     * Read global rules
+     */
+    readGlobalRules(): Promise<GlobalRules | null>;
+    /**
+     * Update global rules
+     */
+    updateGlobalRules(content: string): Promise<GlobalRules>;
+    /**
+     * Generate default global rule content
+     */
+    private generateDefaultGlobalRule;
 }
